@@ -22,7 +22,8 @@ The system is designed to inspect incoming HTTP requests, identify suspicious pa
 
 The architecture illustrates how incoming HTTP requests move through inspection, attack detection, protection, and security event logging.
 
-![SentinelShield System Architecture](docs/sentinelshield-architecture.png)
+<img width="1774" height="887" alt="SentinelShield Cybersecurity Pipeline" src="https://github.com/user-attachments/assets/0e008dbb-a0b2-4164-871a-eb3b85dab2d8" />
+
 
 **Request Flow:** Client Request → Request Inspection → Attack Detection → Protection & Rate Limiting → Security Event Logging.
 
