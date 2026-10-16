@@ -71,9 +71,7 @@ The planned dashboard will provide a visual overview of the system's security ac
 
 **Dashboard Preview — Planned Interface**
 
-![SentinelShield Dashboard Mockup](docs/sentinelshield-dashboard.png)
-
-*The image above is intended as a visual design reference. It does not represent a functioning dashboard unless these features have been implemented in the application.*
+<img width="1919" height="1004" alt="Screenshot 3" src="https://github.com/user-attachments/assets/0ebd0d92-1aed-4f58-bcd0-6c0e5c0cf7e1" />
 
 ---
 
@@ -163,33 +161,34 @@ Document the actual test results from the current version of the project.
 
 Shows the SentinelShield startup banner, enabled protection components, request limits, and local server information.
 
-![Application Startup](Screenshots/application-startup.png)
+<img width="869" height="948" alt="Screenshot 1" src="https://github.com/user-attachments/assets/45aa902e-901b-4b30-8525-917e070536aa" />
 
 ### 🛡️ 2. Attack Detection
 
 Demonstrates a controlled test request flagged by the detection engine, including the detected category and resulting response.
 
-![Attack Detection](Screenshots/attack-detection.png)
+<img width="1919" height="697" alt="Screenshot 4" src="https://github.com/user-attachments/assets/3ed04521-40c7-4298-ba2f-edfd2f615d83" />
+
 
 ### 🚦 3. Rate Limiting
 
 Shows request-limit enforcement and the HTTP `429 Too Many Requests` response when the configured threshold is exceeded.
 
-![Rate Limiting](Screenshots/rate-limiting.png)
+<img width="1919" height="815" alt="Screenshot 1 1" src="https://github.com/user-attachments/assets/eb59eaea-1092-4769-99b4-d9dd38f3f24f" />
+
 
 ### 📋 4. Security Event Logging
 
 Displays structured security event records containing available timestamps, detection categories, severity, and actions.
 
-![Security Event Logging](Screenshots/security-event-logging.png)
+<img width="1216" height="612" alt="Screenshot 2" src="https://github.com/user-attachments/assets/9481a304-8ac8-45a0-915e-da9d2c3c4c93" />
+
 
 ### ✅ 5. Automated Test Results
 
 Shows the actual pytest execution output for the project's automated validation suite.
 
-![Automated Test Results](Screenshots/test-results.png)
-
-*Replace these image paths with the actual screenshot filenames uploaded to the repository.*
+<img width="1919" height="708" alt="Screenshot 1" src="https://github.com/user-attachments/assets/e1db8c83-0093-4ca9-85e6-8680fb08fd97" />
 
 ---
 
