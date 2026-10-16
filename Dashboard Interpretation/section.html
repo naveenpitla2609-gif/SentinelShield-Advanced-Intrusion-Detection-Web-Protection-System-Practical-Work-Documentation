@@ -1,0 +1,121 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title }} | SentinelShield</title>
+    <style>
+        :root {
+            --bg:#080e1b; --panel:#101a2b; --border:#24354d;
+            --text:#e7efff; --muted:#8da2bf; --cyan:#32d9f5;
+            --green:#38d996; --red:#ff5d72; --amber:#ffbd59;
+        }
+        * { box-sizing:border-box; }
+        body {
+            margin:0; background:var(--bg); color:var(--text);
+            font-family:"Segoe UI",Arial,sans-serif;
+        }
+        .layout { display:grid; grid-template-columns:225px minmax(0,1fr); min-height:100vh; }
+        aside { background:#0b1322; border-right:1px solid var(--border); padding:28px 18px; }
+        .brand { font-size:20px; font-weight:800; letter-spacing:1px; }
+        .brand span { color:var(--cyan); }
+        .brand-sub { color:var(--muted); font-size:10px; letter-spacing:2px; margin-top:7px; }
+        .nav-title { margin:42px 0 12px; color:#6e84a3; font-size:10px; letter-spacing:2px; }
+        .nav-item {
+            display:block; padding:13px 12px; margin:7px 0; border-radius:8px;
+            color:var(--muted); font-size:13px; text-decoration:none;
+        }
+        .nav-item:hover,.nav-item.active { background:#142b40; color:var(--cyan); border:1px solid #21485c; }
+        main { min-width:0; padding:28px; }
+        header { padding-bottom:22px; border-bottom:1px solid var(--border); }
+        h1 { margin:0; font-size:25px; }
+        .subtitle { margin-top:8px; color:var(--muted); font-size:13px; }
+        .toolbar { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin:26px 0 15px; }
+        .count { background:#102538; border:1px solid #21485c; color:var(--cyan); padding:10px 14px; border-radius:8px; font-size:12px; }
+        .panel { background:var(--panel); border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+        .table-wrap { overflow-x:auto; }
+        table { width:100%; border-collapse:collapse; text-align:left; min-width:850px; }
+        th { background:#121f31; color:var(--muted); font-size:10px; letter-spacing:1px; }
+        th,td { padding:15px 16px; border-bottom:1px solid #202e42; font-size:12px; white-space:nowrap; }
+        tr:last-child td { border-bottom:0; }
+        td { color:#d8e4f7; }
+        .pill { display:inline-block; padding:5px 8px; border-radius:5px; font-size:10px; font-weight:700; }
+        .high,.blocked { color:var(--red); background:#3a1c2b; }
+        .info,.allowed { color:var(--green); background:#15372e; }
+        .other { color:var(--amber); background:#3b2d19; }
+        .empty { text-align:center; color:var(--muted); padding:30px; }
+        .back { color:var(--cyan); text-decoration:none; font-size:12px; }
+        .footer { padding:20px 0; color:#7186a3; font-size:11px; }
+        @media(max-width:700px) {
+            .layout { grid-template-columns:1fr; }
+            aside { border-right:0; border-bottom:1px solid var(--border); padding:18px; }
+            .nav-title { display:none; }
+            main { padding:18px; }
+            h1 { font-size:21px; }
+        }
+    </style>
+</head>
+<body>
+<div class="layout">
+    <aside>
+        <div class="brand">SENTINEL<span>SHIELD</span></div>
+        <div class="brand-sub">SECURITY INTELLIGENCE</div>
+        <div class="nav-title">WORKSPACE</div>
+        <a class="nav-item {% if active_page == 'overview' %}active{% endif %}" href="/dashboard">&#127968; &nbsp; Security Overview</a>
+        <a class="nav-item {% if active_page == 'attacks' %}active{% endif %}" href="/attack-monitoring">&#128737;&#65039; &nbsp; Attack Monitoring</a>
+        <a class="nav-item {% if active_page == 'logs' %}active{% endif %}" href="/event-logs">&#128203; &nbsp; Event Logs</a>
+        <a class="nav-item {% if active_page == 'protection' %}active{% endif %}" href="/protection-history">&#9889; &nbsp; Protection History</a>
+        <div class="nav-title">SYSTEM</div>
+        <a class="nav-item" href="/health" target="_blank">&#128154; &nbsp; Health API</a>
+        <div class="system-box">
+        </div>
+    </aside>
+
+    <main>
+        <header>
+            <h1>{{ page_title }}</h1>
+            <div class="subtitle">{{ page_subtitle }}</div>
+        </header>
+
+        <div class="toolbar">
+            <a class="back" href="/dashboard">&larr; Back to Security Overview</a>
+            <div class="count">RECORDED EVENTS: {{ total }}</div>
+        </div>
+
+        <section class="panel">
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>TIMESTAMP</th><th>SOURCE IP</th><th>REQUEST</th>
+                        <th>CATEGORY</th><th>SEVERITY</th><th>ACTION</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for event in events %}
+                    {% set severity = event.get('severity', 'INFO')|upper %}
+                    {% set action = event.get('action', 'UNKNOWN')|upper %}
+                    <tr>
+                        <td>{{ event.get('timestamp', 'Unknown') }}</td>
+                        <td>{{ event.get('source_ip', 'unknown') }}</td>
+                        <td>{{ event.get('method', '?') }} {{ event.get('path', '/') }}</td>
+                        <td>{{ (event.get('categories') or [])|join(', ') or '?' }}</td>
+                        <td><span class="pill {{ 'high' if severity == 'HIGH' else 'info' }}">{{ severity }}</span></td>
+                        <td><span class="pill {{ 'blocked' if action == 'BLOCKED' else ('allowed' if action == 'ALLOWED' else 'other') }}">{{ action }}</span></td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="6" class="empty">No events recorded yet. New activity will appear here when requests are processed.</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <div class="footer">SENTINELSHIELD | ADVANCED INTRUSION DETECTION & WEB PROTECTION</div>
+    </main>
+</div>
+</body>
+</html>
+
+
+

@@ -1,0 +1,574 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SentinelShield | Security Operations Center</title>
+    <style>
+        :root {
+            --bg: #080e1b;
+            --panel: #101a2b;
+            --panel2: #121f33;
+            --border: #24354d;
+            --text: #e7efff;
+            --muted: #8da2bf;
+            --cyan: #32d9f5;
+            --green: #38d996;
+            --red: #ff5d72;
+            --amber: #ffbd59;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 225px minmax(0, 1fr);
+            min-height: 100vh;
+        }
+
+        aside {
+            background: #0b1322;
+            border-right: 1px solid var(--border);
+            padding: 28px 18px;
+        }
+
+        .brand {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .brand span { color: var(--cyan); }
+
+        .brand-sub {
+            color: var(--muted);
+            font-size: 10px;
+            letter-spacing: 2px;
+            margin-top: 7px;
+        }
+
+        .nav-title {
+            margin: 42px 0 12px;
+            color: #6e84a3;
+            font-size: 10px;
+            letter-spacing: 2px;
+        }
+
+        .nav-item {
+            display: block;
+            text-decoration: none;
+            padding: 13px 12px;
+            margin: 7px 0;
+            border-radius: 8px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .nav-item.active {
+            background: #142b40;
+            color: var(--cyan);
+            border: 1px solid #21485c;
+        }
+
+        .system-box {
+            margin-top: 50px;
+            padding: 14px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #0e1929;
+        }
+
+        .system-box small { color: var(--muted); }
+
+        .live-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: var(--green);
+            border-radius: 50%;
+            margin-right: 7px;
+            box-shadow: 0 0 10px #38d99688;
+        }
+
+        main { min-width: 0; padding: 28px; }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            padding-bottom: 22px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        h1 { margin: 0; font-size: 25px; }
+        .subtitle { margin-top: 7px; color: var(--muted); font-size: 13px; }
+
+        .status {
+            padding: 10px 14px;
+            border: 1px solid #225443;
+            border-radius: 8px;
+            background: #10271f;
+            color: var(--green);
+            font-size: 12px;
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin: 27px 0 15px;
+        }
+
+        .section-heading h2 { margin: 0; font-size: 16px; }
+        .muted { color: var(--muted); font-size: 12px; }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 15px;
+        }
+
+        .card, .panel {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+
+        .card { padding: 19px; min-width: 0; }
+
+        .card-label {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .card-value {
+            margin-top: 14px;
+            font-size: 30px;
+            font-weight: 750;
+            overflow-wrap: anywhere;
+        }
+
+        .card-note { margin-top: 9px; font-size: 11px; color: var(--muted); }
+        .cyan { color: var(--cyan); }
+        .green { color: var(--green); }
+        .red { color: var(--red); }
+        .amber { color: var(--amber); }
+
+        .panels {
+            display: grid;
+            grid-template-columns: minmax(0, 1.7fr) minmax(230px, 1fr);
+            gap: 15px;
+            margin-top: 18px;
+        }
+
+        .panel { padding: 20px; min-width: 0; }
+        .panel h3 { margin: 0; font-size: 14px; }
+        .panel-sub { color: var(--muted); font-size: 11px; margin-top: 7px; }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 210px;
+            margin-top: 15px;
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 12px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .legend span::before {
+            content: "";
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
+            margin-right: 6px;
+            background: var(--cyan);
+        }
+
+        .legend .blocked::before { background: var(--red); }
+
+        .breakdown { margin-top: 20px; }
+
+        .break-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            font-size: 12px;
+            margin: 17px 0 8px;
+        }
+
+        .track {
+            height: 7px;
+            background: #202e42;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .fill { height: 100%; background: var(--cyan); border-radius: 10px; }
+        .fill.red-fill { background: var(--red); }
+        .fill.green-fill { background: var(--green); }
+
+        .table-wrap {
+            margin-top: 18px;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--panel);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 850px;
+            text-align: left;
+        }
+
+        th {
+            color: var(--muted);
+            font-size: 10px;
+            letter-spacing: 1px;
+            font-weight: 600;
+            background: #121f31;
+        }
+
+        th, td {
+            padding: 15px 16px;
+            border-bottom: 1px solid #202e42;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        tr:last-child td { border-bottom: none; }
+        td { color: #d8e4f7; }
+
+        .pill {
+            display: inline-block;
+            padding: 5px 8px;
+            border-radius: 5px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .pill.high, .pill.blocked {
+            color: var(--red);
+            background: #3a1c2b;
+        }
+
+        .pill.info, .pill.allowed {
+            color: var(--green);
+            background: #15372e;
+        }
+
+        .pill.other {
+            color: var(--amber);
+            background: #3b2d19;
+        }
+
+        .empty { color: var(--muted); text-align: center; padding: 28px; }
+        .footer { padding: 20px 0 5px; color: #7186a3; font-size: 11px; }
+
+        @media (max-width: 1050px) {
+            .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .panels { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 650px) {
+            .layout { grid-template-columns: 1fr; }
+            aside { border-right: 0; border-bottom: 1px solid var(--border); padding: 18px; }
+            .nav-title, .nav-item, .system-box { display: none; }
+            main { padding: 18px; }
+            h1 { font-size: 21px; }
+            .stats { gap: 9px; }
+            .card { padding: 13px; }
+            .card-value { font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+<div class="layout">
+    <aside>
+        <div class="brand">SENTINEL<span>SHIELD</span></div>
+        <div class="brand-sub">SECURITY INTELLIGENCE</div>
+
+        <div class="nav-title">WORKSPACE</div>
+        <a class="nav-item active" href="/dashboard">&#127968; &nbsp; Security Overview</a>
+        <a class="nav-item" href="/attack-monitoring">&#128737;&#65039; &nbsp; Attack Monitoring</a>
+        <a class="nav-item" href="/event-logs">&#128203; &nbsp; Event Logs</a>
+        <a class="nav-item" href="/protection-history">&#9889; &nbsp; Protection History</a>
+
+        <div class="system-box">
+            <div style="font-size:12px;margin-bottom:10px;">SYSTEM STATUS</div>
+            <div style="font-size:12px;color:var(--green);margin-bottom:10px;">
+                <span class="live-dot"></span>Flask API
+            </div>
+            <small>Event log</small>
+            <div style="font-size:12px;margin-top:6px;">
+                <span class="live-dot"></span>Connected
+            </div>
+        </div>
+    </aside>
+
+    <main>
+        <header class="topbar">
+            <div>
+                <h1>Security Operations Center</h1>
+                <div class="subtitle">Real-time request monitoring and threat visibility</div>
+            </div>
+            <div class="status"><span class="live-dot"></span>MONITORING ACTIVE</div>
+        </header>
+
+        <div class="section-heading">
+            <h2>Security Overview</h2>
+            <div class="muted">Data from security event logs</div>
+        </div>
+
+        <section class="stats">
+            <div class="card">
+                <div class="card-label">TOTAL EVENTS</div>
+                <div class="card-value cyan" id="total">—</div>
+                <div class="card-note">Recorded log entries</div>
+            </div>
+            <div class="card">
+                <div class="card-label">BLOCKED ATTACKS</div>
+                <div class="card-value red" id="blocked">—</div>
+                <div class="card-note">Events marked BLOCKED</div>
+            </div>
+            <div class="card">
+                <div class="card-label">ALLOWED REQUESTS</div>
+                <div class="card-value green" id="allowed">—</div>
+                <div class="card-note">Events marked ALLOWED</div>
+            </div>
+            <div class="card">
+                <div class="card-label">HIGH SEVERITY</div>
+                <div class="card-value amber" id="high">—</div>
+                <div class="card-note">Events marked HIGH</div>
+            </div>
+        </section>
+
+        <section class="panels">
+            <div class="panel">
+                <h3>Event Activity</h3>
+                <div class="panel-sub">Recent recorded events grouped by time interval</div>
+                <canvas id="activityChart" aria-label="Security event activity chart"></canvas>
+                <div class="legend">
+                    <span>All events</span>
+                    <span class="blocked">Blocked attacks</span>
+                </div>
+            </div>
+            <div class="panel">
+                <h3>Event Breakdown</h3>
+                <div class="panel-sub">Distribution across recorded event actions</div>
+                <div class="breakdown" id="breakdown">
+                    <div class="empty">Loading event data…</div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section-heading">
+            <h2>Recent Security Events</h2>
+            <div class="muted" id="updated">Waiting for data…</div>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>TIMESTAMP</th>
+                        <th>SOURCE IP</th>
+                        <th>REQUEST</th>
+                        <th>CATEGORY</th>
+                        <th>SEVERITY</th>
+                        <th>ACTION</th>
+                    </tr>
+                </thead>
+                <tbody id="events">
+                    <tr><td colspan="6" class="empty">Loading security events…</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="footer">
+            SENTINELSHIELD &nbsp;•&nbsp; ADVANCED INTRUSION DETECTION & WEB PROTECTION
+            <span style="float:right;">Dashboard refreshes every 5 seconds</span>
+        </div>
+    </main>
+</div>
+
+<script>
+    const $ = (id) => document.getElementById(id);
+
+    function escapeHtml(value) {
+        return String(value ?? "").replace(/[&<>"']/g, ch => ({
+            "&": "&amp;", "<": "&lt;", ">": "&gt;",
+            '"': "&quot;", "'": "&#39;"
+        })[ch]);
+    }
+
+    function formatTime(value) {
+        if (!value) return "Unknown";
+        const date = new Date(value);
+        return Number.isNaN(date.getTime()) ? escapeHtml(value) : date.toLocaleString();
+    }
+
+    function renderBreakdown(actions) {
+        const entries = Object.entries(actions || {});
+        if (!entries.length) {
+            $("breakdown").innerHTML = '<div class="empty">No events recorded yet</div>';
+            return;
+        }
+
+        const max = Math.max(1, ...entries.map(item => item[1]));
+        $("breakdown").innerHTML = entries.map(([name, count]) => {
+            const action = name.toUpperCase();
+            const color = action === "BLOCKED" ? "red-fill" :
+                          action === "ALLOWED" ? "green-fill" : "";
+            const width = Math.min(100, count / max * 100);
+            return `
+                <div class="break-row">
+                    <span>${escapeHtml(name.replaceAll("_", " "))}</span>
+                    <strong>${count}</strong>
+                </div>
+                <div class="track">
+                    <div class="fill ${color}" style="width:${width}%"></div>
+                </div>`;
+        }).join("");
+    }
+
+    function drawChart(points) {
+        const canvas = $("activityChart");
+        const rect = canvas.getBoundingClientRect();
+        const ratio = window.devicePixelRatio || 1;
+        const width = Math.max(280, rect.width);
+        const height = 210;
+
+        canvas.width = width * ratio;
+        canvas.height = height * ratio;
+
+        const ctx = canvas.getContext("2d");
+        ctx.scale(ratio, ratio);
+        ctx.clearRect(0, 0, width, height);
+
+        const pad = { left: 30, right: 12, top: 15, bottom: 30 };
+        const chartW = width - pad.left - pad.right;
+        const chartH = height - pad.top - pad.bottom;
+        const max = Math.max(1, ...points.map(p => p.total));
+
+        ctx.font = "10px Segoe UI, Arial";
+        ctx.textAlign = "right";
+        ctx.fillStyle = "#8da2bf";
+        ctx.strokeStyle = "#26364c";
+        ctx.lineWidth = 1;
+
+        for (let i = 0; i <= 4; i++) {
+            const y = pad.top + chartH * i / 4;
+            ctx.beginPath();
+            ctx.moveTo(pad.left, y);
+            ctx.lineTo(width - pad.right, y);
+            ctx.stroke();
+            ctx.fillText(String(Math.round(max * (4 - i) / 4)), pad.left - 7, y + 3);
+        }
+
+        const x = i => pad.left + (points.length <= 1 ? chartW / 2 :
+            chartW * i / (points.length - 1));
+        const y = value => pad.top + chartH * (1 - value / max);
+
+        function line(key, color) {
+            ctx.beginPath();
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            points.forEach((p, i) => {
+                if (i === 0) ctx.moveTo(x(i), y(p[key]));
+                else ctx.lineTo(x(i), y(p[key]));
+            });
+            ctx.stroke();
+        }
+
+        line("total", "#32d9f5");
+        line("blocked", "#ff5d72");
+
+        ctx.fillStyle = "#8da2bf";
+        ctx.textAlign = "center";
+        points.forEach((p, i) => {
+            if (i % 2 === 0 || i === points.length - 1) {
+                ctx.fillText(p.label, x(i), height - 9);
+            }
+        });
+    }
+
+    function renderEvents(events) {
+        if (!events.length) {
+            $("events").innerHTML =
+                '<tr><td colspan="6" class="empty">No security events have been recorded yet.</td></tr>';
+            return;
+        }
+
+        $("events").innerHTML = events.map(event => {
+            const severity = String(event.severity || "INFO").toUpperCase();
+            const action = String(event.action || "UNKNOWN").toUpperCase();
+            const severityClass = severity === "HIGH" ? "high" : "info";
+            const actionClass = action === "BLOCKED" ? "blocked" :
+                                action === "ALLOWED" ? "allowed" : "other";
+            const categories = Array.isArray(event.categories) && event.categories.length
+                ? event.categories.join(", ") : "—";
+
+            return `<tr>
+                <td>${formatTime(event.timestamp)}</td>
+                <td>${escapeHtml(event.source_ip || "unknown")}</td>
+                <td>${escapeHtml(event.method || "?")} ${escapeHtml(event.path || "/")}</td>
+                <td>${escapeHtml(categories)}</td>
+                <td><span class="pill ${severityClass}">${escapeHtml(severity)}</span></td>
+                <td><span class="pill ${actionClass}">${escapeHtml(action)}</span></td>
+            </tr>`;
+        }).join("");
+    }
+
+    async function refreshDashboard() {
+        try {
+            const response = await fetch("/api/dashboard-stats", { cache: "no-store" });
+            if (!response.ok) throw new Error("Dashboard API returned HTTP " + response.status);
+            const data = await response.json();
+
+            $("total").textContent = data.stats.total;
+            $("blocked").textContent = data.stats.blocked;
+            $("allowed").textContent = data.stats.allowed;
+            $("high").textContent = data.stats.high_severity;
+
+            renderBreakdown(data.stats.actions);
+            renderEvents(data.events);
+            drawChart(data.activity);
+            $("updated").textContent = "Last updated " + new Date().toLocaleTimeString();
+        } catch (error) {
+            $("updated").textContent = "Could not load data — " + error.message;
+        }
+    }
+
+    let resizeTimer;
+    window.addEventListener("resize", () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(refreshDashboard, 150);
+    });
+
+    refreshDashboard();
+    setInterval(refreshDashboard, 5000);
+</script>
+</body>
+</html>
+
+
+
