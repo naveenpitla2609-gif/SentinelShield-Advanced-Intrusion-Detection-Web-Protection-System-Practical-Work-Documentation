@@ -99,7 +99,7 @@ git clone https://github.com/naveenpitla2609-gif/SentinelShield-Advanced-Intrusi
 ### 2. Navigate to the Project Directory
 
 ```bash
-cd SentinelShield-Advanced-Intrusion-Detection-Web-Protection-System-Practical-Work-Documentation
+cd SentinelShield
 ```
 
 ### 3. Create a Virtual Environment
